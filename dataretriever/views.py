@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from .forms import ResumeUploadForm
+from .forms import ResumeUploadForm, PersonalInfoForm
 from .extractors import extract_text_from_docx, extract_text_from_pdf
 
 
@@ -9,9 +9,11 @@ def index(request):
     error = None
     filename = None
     extraction_done = False
+    personal_info_form = PersonalInfoForm()
 
     if request.method == "POST":
         form = ResumeUploadForm(request.POST, request.FILES)
+        personal_info_form = PersonalInfoForm(request.POST)
         if form.is_valid():
             uploaded_file = request.FILES["file"]
             filename = uploaded_file.name
@@ -41,6 +43,7 @@ def index(request):
         "dataretriever/upload.html",
         {
             "form": form,
+            "personal_info_form": personal_info_form,
             "extracted_text": extracted_text,
             "error": error,
             "filename": filename,
