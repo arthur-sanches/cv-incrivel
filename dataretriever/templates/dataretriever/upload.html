@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Incrível - Resume Data Extractor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #343541;
+            --sidebar-bg: #202123;
+            --chat-bg: #444654;
+            --accent-color: #10A37F;
+            --text-color: #ECECF1;
+            --muted-color: #8E8EA0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .page-header p {
+            color: var(--muted-color);
+        }
+
+        .upload-card {
+            background-color: var(--sidebar-bg);
+            border: 1px solid #3E3F4B;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--muted-color);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: var(--bg-color);
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent-color);
+            background-color: #3E3F4B;
+        }
+
+        .upload-area.dragover {
+            border-color: var(--accent-color);
+            background-color: #3E3F4B;
+        }
+
+        .upload-area i {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-area p {
+            margin-bottom: 0;
+            color: var(--muted-color);
+        }
+
+        .btn-extract {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .btn-extract:hover {
+            background-color: #0d8c6d;
+            color: white;
+        }
+
+        .result-card {
+            background-color: var(--chat-bg);
+            border: 1px solid #3E3F4B;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #3E3F4B;
+        }
+
+        .result-header i {
+            color: var(--accent-color);
+            font-size: 1.2rem;
+        }
+
+        .result-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .extracted-text {
+            background-color: var(--sidebar-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            white-space: pre-wrap;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .filename-badge {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .alert-custom {
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+        }
+
+        .spinner-border {
+            color: var(--accent-color);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-selected {
+            margin-top: 1rem;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="page-header">
+            <h1><i class="bi bi-file-earmark-text"></i> CV Incrível</h1>
+            <p>Upload your resume and we'll extract the information instantly</p>
+        </div>
+
+        <div class="upload-card">
+            <form method="post" enctype="multipart/form-data" id="uploadForm" action="{% url 'index' %}">
+                {% csrf_token %}
+                <div class="upload-area" id="dropZone">
+                    <i class="bi bi-cloud-arrow-up"></i>
+                    <p class="mt-2">Drag & drop your resume here</p>
+                    <p class="text-muted small">or click to browse</p>
+                    <p class="text-muted small fst-italic">Accepted: .docx, .pdf</p>
+                    {{ form.file }}
+                </div>
+                <div class="text-center mt-3">
+                    <div id="fileSelected" class="file-selected d-none">
+                        <i class="bi bi-check-circle-fill"></i> <span id="fileName"></span>
+                    </div>
+                    <button type="submit" class="btn btn-extract mt-3">
+                        <i class="bi bi-magic"></i> Extract Data
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-custom" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> {{ error }}
+        </div>
+        {% endif %}
+
+        {% if extraction_done %}
+        <div class="result-card">
+            <div class="result-header">
+                <i class="bi bi-robot"></i>
+                <h5>Extracted Information</h5>
+                {% if filename %}
+                <span class="filename-badge ms-auto">{{ filename }}</span>
+                {% endif %}
+            </div>
+            {% if extracted_text %}
+            <div class="extracted-text">{{ extracted_text|escape }}</div>
+            {% else %}
+            <div class="alert alert-custom" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i> No text could be extracted from this file.
+                {% if filename and ".docx" in filename.lower %}
+                Try uploading the file as a PDF instead.
+                {% elif filename and ".pdf" in filename.lower %}
+                Try uploading the file as a DOCX instead.
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.querySelector('input[type="file"]');
+        const fileSelected = document.getElementById('fileSelected');
+        const fileName = document.getElementById('fileName');
+        const uploadForm = document.getElementById('uploadForm');
+
+        // Make entire drop zone clickable
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                fileName.textContent = e.target.files[0].name;
+                fileSelected.classList.remove('d-none');
+            }
+        });
+
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            if (files.length > 0) {
+                fileName.textContent = files[0].name;
+                fileSelected.classList.remove('d-none');
+            }
+        });
+
+        // Show loading spinner on form submit
+        uploadForm.addEventListener('submit', function() {
+            const btn = this.querySelector('button[type="submit"]');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Extracting...';
+        });
+    </script>
+</body>
+</html>
