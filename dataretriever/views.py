@@ -1,3 +1,5 @@
+import re
+
 from django.shortcuts import render
 
 from .forms import ResumeUploadForm, PersonalInfoForm
@@ -10,6 +12,7 @@ def index(request):
     filename = None
     extraction_done = False
     personal_info_form = PersonalInfoForm()
+    redacted_fields = []
 
     if request.method == "POST":
         form = ResumeUploadForm(request.POST, request.FILES)
@@ -20,6 +23,17 @@ def index(request):
             file_bytes = uploaded_file.read()
             extraction_done = True
 
+            # Collect personal info for redaction if valid
+            sensitive_values = []
+            if personal_info_form.is_valid():
+                for field in ["name", "email", "phone", "address"]:
+                    val = personal_info_form.cleaned_data.get(field, "").strip()
+                    if val:
+                        sensitive_values.append((val, field.upper()))
+                        redacted_fields.append(field)
+            # Sort by length descending so longer strings match first
+            sensitive_values.sort(key=lambda x: len(x[0]), reverse=True)
+
             try:
                 if filename.lower().endswith(".docx"):
                     extracted_text = extract_text_from_docx(file_bytes)
@@ -27,6 +41,16 @@ def index(request):
                     extracted_text = extract_text_from_pdf(file_bytes)
                 else:
                     error = "Unsupported file format."
+
+                # Redact sensitive data from extracted text
+                if extracted_text and sensitive_values:
+                    for value, field_name in sensitive_values:
+                        extracted_text = re.sub(
+                            re.escape(value),
+                            f"[REDACTED_{field_name}]",
+                            extracted_text,
+                            flags=re.IGNORECASE,
+                        )
             except Exception as e:
                 ext = filename.lower().split(".")[-1] if "." in filename else ""
                 suggestion = ""
@@ -48,5 +72,6 @@ def index(request):
             "error": error,
             "filename": filename,
             "extraction_done": extraction_done,
+            "redacted_fields": redacted_fields,
         },
     )

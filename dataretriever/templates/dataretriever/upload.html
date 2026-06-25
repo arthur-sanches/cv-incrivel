@@ -238,6 +238,11 @@
             </div>
             {% if extracted_text %}
             <div class="extracted-text">{{ extracted_text|escape }}</div>
+            {% if redacted_fields %}
+            <div class="mt-2 text-muted small">
+                <i class="bi bi-shield-lock-fill"></i> Personal data redacted: {{ redacted_fields|join:", " }}
+            </div>
+            {% endif %}
             {% else %}
             <div class="alert alert-custom" role="alert">
                 <i class="bi bi-exclamation-triangle-fill"></i> No text could be extracted from this file.
