@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}CV Incrível - Login{% endblock %}
+
+{% block extra_styles %}
+    <style>
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .login-card {
+            background-color: var(--sidebar-bg);
+            border: 1px solid #3E3F4B;
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .login-card .brand {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-card .brand i {
+            font-size: 3rem;
+            color: var(--accent-color);
+        }
+
+        .login-card .brand h2 {
+            font-weight: 700;
+            margin-top: 0.5rem;
+        }
+
+        .login-card .brand small {
+            color: var(--muted-color);
+        }
+
+        .form-control-custom {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid #3E3F4B;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-control-custom:focus {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(16, 163, 127, 0.25);
+        }
+
+        .form-control-custom::placeholder {
+            color: var(--muted-color);
+            opacity: 0.7;
+        }
+
+        .btn-login {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        .btn-login:hover {
+            background-color: #0d8c6d;
+            color: white;
+        }
+
+        .form-label-custom {
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .input-group-custom {
+            position: relative;
+        }
+
+        .input-group-custom i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted-color);
+            z-index: 10;
+        }
+
+        .input-group-custom .form-control-custom {
+            padding-left: 2.8rem;
+        }
+
+        .alert-custom {
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="brand">
+            <i class="bi bi-file-earmark-text"></i>
+            <h2>CV Incrível</h2>
+            <small>Sign in to your account</small>
+        </div>
+
+        {% if form.errors %}
+        <div class="alert alert-custom" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> Invalid username or password. Please try again.
+        </div>
+        {% endif %}
+
+        {% if next %}
+            {% if user.is_authenticated %}
+            <div class="alert alert-custom" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i> Your account doesn't have access to this page.
+            </div>
+            {% endif %}
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="{{ form.username.id_for_label }}" class="form-label form-label-custom">
+                    <i class="bi bi-person-fill"></i> Username
+                </label>
+                <div class="input-group-custom">
+                    <i class="bi bi-person"></i>
+                    <input type="text" name="{{ form.username.html_name }}" class="form-control form-control-custom" id="{{ form.username.id_for_label }}" placeholder="Enter your username" required autofocus>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="{{ form.password.id_for_label }}" class="form-label form-label-custom">
+                    <i class="bi bi-lock-fill"></i> Password
+                </label>
+                <div class="input-group-custom">
+                    <i class="bi bi-lock"></i>
+                    <input type="password" name="{{ form.password.html_name }}" class="form-control form-control-custom" id="{{ form.password.id_for_label }}" placeholder="Enter your password" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-login">
+                <i class="bi bi-box-arrow-in-right"></i> Sign In
+            </button>
+            <input type="hidden" name="next" value="{{ next }}">
+        </form>
+    </div>
+</div>
+{% endblock %}

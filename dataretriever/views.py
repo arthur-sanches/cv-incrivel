@@ -1,5 +1,6 @@
 import re
 
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from .forms import ResumeUploadForm, PersonalInfoForm
@@ -26,6 +27,7 @@ def _make_flexible_phone_pattern(phone_value: str) -> str | None:
     return fmt + inner + fmt
 
 
+@login_required
 def index(request):
     extracted_text = None
     error = None
@@ -99,5 +101,6 @@ def index(request):
             "filename": filename,
             "extraction_done": extraction_done,
             "redacted_fields": redacted_fields,
+            "active_page": "extract",
         },
     )

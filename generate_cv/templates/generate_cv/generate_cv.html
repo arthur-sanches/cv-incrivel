@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}CV Incrível - Generate CV{% endblock %}
+
+{% block extra_styles %}
+    <style>
+        .btn-generate {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .btn-generate:hover {
+            background-color: #0d8c6d;
+            color: white;
+        }
+
+        textarea.form-control {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid #3E3F4B;
+        }
+
+        textarea.form-control:focus {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(16, 163, 127, 0.25);
+        }
+    </style>
+    {% endblock %}
+
+{% block content %}
+    <div class="main-container">
+        <div class="page-header">
+            <h1><i class="bi bi-file-earmark-text"></i> CV Incrível</h1>
+            <p>Generate a tailored CV based on a job description</p>
+        </div>
+
+        <div class="upload-card">
+            <form method="post" id="generateCvForm" action="{% url 'generate_cv' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="{{ form.job_description.id_for_label }}" class="form-label fw-semibold">
+                        <i class="bi bi-briefcase-fill"></i> {{ form.job_description.label }}
+                    </label>
+                    {{ form.job_description }}
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-generate">
+                        <i class="bi bi-stars"></i> Generate
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-custom" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> {{ error }}
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+        const form = document.getElementById('generateCvForm');
+        form.addEventListener('submit', function() {
+            const btn = this.querySelector('button[type="submit"]');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...';
+            btn.disabled = true;
+        });
+    </script>
+{% endblock %}
