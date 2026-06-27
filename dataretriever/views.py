@@ -6,6 +6,26 @@ from .forms import ResumeUploadForm, PersonalInfoForm
 from .extractors import extract_text_from_docx, extract_text_from_pdf
 
 
+def _make_flexible_phone_pattern(phone_value: str) -> str | None:
+    """Build a regex that matches phone digits regardless of formatting.
+
+    Extracts only digits from the user-provided value and creates a pattern
+    that allows any non-digit characters (spaces, parentheses, dashes, etc.)
+    between each digit. Common formatting characters (``(``, ``)``, ``-``,
+    ``+``, ``.``, space) are also allowed *before* the first digit and
+    *after* the last digit so that e.g. ``(11) 98765-1234`` is fully
+    captured when the user entered ``11 98765-1234``.
+    """
+    digits = re.sub(r"\D", "", phone_value)
+    if not digits:
+        return None
+    # Allow any non-digit characters between consecutive digits
+    inner = r"\D*".join(re.escape(d) for d in digits)
+    # Also allow common formatting chars around the whole number
+    fmt = r"[\s()\-.+]*"
+    return fmt + inner + fmt
+
+
 def index(request):
     extracted_text = None
     error = None
@@ -45,8 +65,14 @@ def index(request):
                 # Redact sensitive data from extracted text
                 if extracted_text and sensitive_values:
                     for value, field_name in sensitive_values:
+                        if field_name == "PHONE":
+                            pattern = _make_flexible_phone_pattern(value)
+                            if pattern is None:
+                                continue
+                        else:
+                            pattern = re.escape(value)
                         extracted_text = re.sub(
-                            re.escape(value),
+                            pattern,
                             f"[REDACTED_{field_name}]",
                             extracted_text,
                             flags=re.IGNORECASE,
