@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'login',
     'dataretriever',
     'generate_cv',
+    'ai_integration',
 ]
 
 MIDDLEWARE = [
@@ -118,6 +119,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# OpenRouter integration settings
+# The API key can also be provided via the OPENROUTER_API_KEY environment variable.
+OPENROUTER_API_KEY = ''
+OPENROUTER_MODEL = 'openrouter/auto'
+OPENROUTER_HTTP_REFERER = ''
+OPENROUTER_X_OPEN_ROUTER_TITLE = ''
 
 # Authentication settings
 LOGIN_URL = '/login/'
