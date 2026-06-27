@@ -5,6 +5,8 @@ from django.shortcuts import render
 
 from .forms import ResumeUploadForm, PersonalInfoForm
 from .extractors import extract_text_from_docx, extract_text_from_pdf
+from .models import Resume
+from ai_integration.services import OpenRouterClient
 
 
 def _make_flexible_phone_pattern(phone_value: str) -> str | None:
@@ -79,6 +81,51 @@ def index(request):
                             extracted_text,
                             flags=re.IGNORECASE,
                         )
+
+                # Process extracted text with AI
+                if extracted_text:
+                    try:
+                        client = OpenRouterClient(
+                            command="""
+                                Extract the data from this resume text and structure it into a 
+                                JSON object, answer me with only the JSON object, here is the 
+                                structure you need to follow:
+                                {
+                                    "resume": {
+                                        "professional_summary": "string",
+                                        "core_competencies": ["string"],
+                                        "experience": [
+                                            {
+                                                "job_title": "string",
+                                                "company": "string",
+                                                "start_date": "string",
+                                                "end_date": "string",
+                                                "achievements": ["string"]
+                                            },
+                                        ],
+                                        "education": [
+                                            {
+                                                "degree": "string",
+                                                "institution": "string",
+                                                "graduation_date": "string"
+                                            },
+                                        ],
+                                        "certifications": ["string"],
+                                        "skills": ["string"],
+                                    }
+                                """,
+                            data=extracted_text,
+                        )
+                        resume_data = client.run()
+                        extracted_text = resume_data
+
+                        # Save to database
+                        Resume.objects.create(
+                            user=request.user,
+                            resume_data=resume_data,
+                        )
+                    except Exception as e:
+                        error = f"AI processing failed: {str(e)}"
             except Exception as e:
                 ext = filename.lower().split(".")[-1] if "." in filename else ""
                 suggestion = ""
