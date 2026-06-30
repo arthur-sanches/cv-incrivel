@@ -119,10 +119,10 @@ def index(request):
                         resume_data = client.run()
                         extracted_text = resume_data
 
-                        # Save to database
-                        Resume.objects.create(
+                        # Save to database (replace any existing resume for this user)
+                        Resume.objects.update_or_create(
                             user=request.user,
-                            resume_data=resume_data,
+                            defaults={"resume_data": resume_data},
                         )
                     except Exception as e:
                         error = f"AI processing failed: {str(e)}"
