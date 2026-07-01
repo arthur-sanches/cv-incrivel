@@ -1,7 +1,7 @@
 import re
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from .forms import ResumeUploadForm, PersonalInfoForm
 from .extractors import extract_text_from_docx, extract_text_from_pdf
@@ -37,6 +37,7 @@ def index(request):
     extraction_done = False
     personal_info_form = PersonalInfoForm()
     redacted_fields = []
+    is_first_time = not Resume.objects.filter(user=request.user).exists()
 
     if request.method == "POST":
         form = ResumeUploadForm(request.POST, request.FILES)
@@ -124,8 +125,12 @@ def index(request):
                             user=request.user,
                             defaults={"resume_data": resume_data},
                         )
+
+                        # Redirect to generate_cv after successful extraction
+                        return redirect("generate_cv")
                     except Exception as e:
-                        error = f"AI processing failed: {str(e)}"
+                        error = f"Processing failed. Please try again later."
+                        print(f"Error during AI processing: {str(e)}")
             except Exception as e:
                 ext = filename.lower().split(".")[-1] if "." in filename else ""
                 suggestion = ""
@@ -149,5 +154,6 @@ def index(request):
             "extraction_done": extraction_done,
             "redacted_fields": redacted_fields,
             "active_page": "extract",
+            "is_first_time": is_first_time,
         },
     )

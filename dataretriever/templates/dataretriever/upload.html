@@ -4,6 +4,31 @@
 
 {% block extra_styles %}
     <style>
+        .setup-banner {
+            background: linear-gradient(135deg, var(--accent-color), #0d8c6d);
+            color: white;
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .setup-banner i {
+            font-size: 2rem;
+        }
+
+        .setup-banner h4 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .setup-banner p {
+            margin: 0.25rem 0 0 0;
+            opacity: 0.9;
+        }
+
         .upload-area {
             border: 2px dashed var(--muted-color);
             border-radius: 10px;
@@ -124,9 +149,23 @@
 
 {% block content %}
     <div class="main-container">
+        {% if is_first_time %}
+        <div class="setup-banner">
+            <i class="bi bi-rocket-takeoff"></i>
+            <div>
+                <h4>Welcome! Let's set up your profile</h4>
+                <p>Upload your most recent resume and fill in your details below to get started. You only need to do this once!</p>
+            </div>
+        </div>
+        {% endif %}
+
         <div class="page-header">
             <h1><i class="bi bi-file-earmark-text"></i> CV Incrível</h1>
+            {% if is_first_time %}
+            <p>Let's get your resume data ready so we can generate an amazing CV for you</p>
+            {% else %}
             <p>Upload your resume and we'll extract the information instantly</p>
+            {% endif %}
         </div>
 
         <div class="upload-card">
@@ -135,15 +174,15 @@
                 <div class="upload-area" id="dropZone">
                     <i class="bi bi-cloud-arrow-up"></i>
                     <p class="mt-2">Drag & drop your resume here</p>
-                    <p class="text-muted small">or click to browse</p>
-                    <p class="text-muted small fst-italic">Accepted: .docx, .pdf</p>
+                    <p class="small">or click to browse</p>
+                    <p class="small fst-italic">Accepted: .docx, .pdf</p>
                     {{ form.file }}
                 </div>
 
                 <!-- Personal Information Fields -->
                 <div class="mt-4 pt-3 border-top border-secondary">
                     <h5 class="mb-3"><i class="bi bi-person-fill"></i> Personal Information</h5>
-                    <p class="text-muted small mb-3">Fill in your details manually or extract them from your resume.</p>
+                    <p class="small mb-3">Fill in your details manually or extract them from your resume.</p>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="{{ personal_info_form.name.id_for_label }}" class="form-label">{{ personal_info_form.name.label }} <span class="text-danger">*</span></label>
@@ -193,7 +232,7 @@
             {% if extracted_text %}
             <div class="extracted-text">{{ extracted_text|escape }}</div>
             {% if redacted_fields %}
-            <div class="mt-2 text-muted small">
+            <div class="mt-2 small">
                 <i class="bi bi-shield-lock-fill"></i> Personal data redacted: {{ redacted_fields|join:", " }}
             </div>
             {% endif %}
