@@ -37,7 +37,7 @@ def index(request):
     filename = None
     extraction_done = False
     personal_info_form = PersonalInfoForm()
-    redacted_fields = []
+    removed_fields = []
     is_first_time = not Resume.objects.filter(user=request.user).exists()
 
     if request.method == "POST":
@@ -56,7 +56,7 @@ def index(request):
                     val = personal_info_form.cleaned_data.get(field, "").strip()
                     if val:
                         sensitive_values.append((val, field.upper()))
-                        redacted_fields.append(field)
+                        removed_fields.append(field)
             # Sort by length descending so longer strings match first
             sensitive_values.sort(key=lambda x: len(x[0]), reverse=True)
 
@@ -94,13 +94,34 @@ def index(request):
                                 structure you need to follow:
                                 {
                                     "resume": {
-                                        "summary": "string (professional summary)",
-                                        "work_experiences": "string (detailed work history)",
-                                        "skills": "string (comma-separated or listed skills)",
-                                        "education": "string (education history)",
-                                        "certificates": "string (certifications)",
-                                        "languages": "string (languages)",
-                                        "links": "string (links like LinkedIn, GitHub, etc.)"
+                                        "summary": "string",
+                                        "work_experiences": [
+                                        {
+                                            "role": "string",
+                                            "company": "string",
+                                            "duration": "string",
+                                            "description": "string"
+                                        },
+                                        ],
+                                        "skills": [
+                                            "string",
+                                        ],
+                                        "education": [
+                                        {
+                                            "degree": "string",
+                                            "institution": "string",
+                                            "graduation_year": "string"
+                                        }
+                                        ],
+                                        "certificates": [
+                                            "string",
+                                        ],
+                                        "languages": [
+                                            "string",
+                                        ],
+                                        "links": [
+                                            "string",
+                                        ]
                                     }
                                 }
                                 """,
@@ -157,7 +178,7 @@ def index(request):
             "error": error,
             "filename": filename,
             "extraction_done": extraction_done,
-            "redacted_fields": redacted_fields,
+            "removed_fields": removed_fields,
             "active_page": "extract",
             "is_first_time": is_first_time,
         },
