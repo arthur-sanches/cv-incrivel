@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "login",
     "resume",
+    "profile",
     "generate_cv",
     "ai_integration",
 ]

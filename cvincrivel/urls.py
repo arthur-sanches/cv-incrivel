@@ -29,5 +29,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("login/", include("login.urls")),
     path("profile_setup/", include("resume.urls")),
+    path("profile/", include("profile.urls")),
     path("generate_cv/", include("generate_cv.urls")),
 ]

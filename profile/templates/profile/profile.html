@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}CV Incrível - My Profile{% endblock %}
+
+{% block extra_styles %}
+    <style>
+        .btn-save {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .btn-save:hover {
+            background-color: #0d8c6d;
+            color: white;
+        }
+
+        .form-label {
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-text {
+            color: var(--muted-color) !important;
+            font-size: 0.8rem;
+        }
+
+        textarea.form-control {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid #3E3F4B;
+            border-radius: 8px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        textarea.form-control:focus {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(16, 163, 127, 0.25);
+        }
+
+        textarea.form-control::placeholder {
+            color: #6B6B7B;
+        }
+
+        .profile-header-icon {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+        }
+
+        .section-card {
+            background-color: var(--sidebar-bg);
+            border: 1px solid #3E3F4B;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-card h5 {
+            color: var(--text-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-card h5 i {
+            color: var(--accent-color);
+        }
+
+        .success-toast {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+
+        .success-toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="main-container">
+        <div class="page-header">
+            <div class="d-flex align-items-center justify-content-center gap-3 mb-2">
+                <i class="bi bi-person-gear profile-header-icon"></i>
+                <h1 class="mb-0">My Profile</h1>
+            </div>
+            <p>View and edit your resume data all in one place</p>
+        </div>
+
+        {% if saved %}
+        <div class="success-toast show" id="savedToast">
+            <i class="bi bi-check-circle-fill"></i> Profile saved successfully!
+        </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'profile' %}">
+            {% csrf_token %}
+
+            <!-- Professional Summary -->
+            <div class="section-card">
+                <h5><i class="bi bi-quote"></i> Professional Summary</h5>
+                {{ form.summary }}
+                {% if form.summary.help_text %}
+                <div class="form-text">{{ form.summary.help_text }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Work Experiences -->
+            <div class="section-card">
+                <h5><i class="bi bi-briefcase-fill"></i> Work Experiences</h5>
+                {{ form.work_experiences }}
+                {% if form.work_experiences.help_text %}
+                <div class="form-text">{{ form.work_experiences.help_text }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Skills -->
+            <div class="section-card">
+                <h5><i class="bi bi-star-fill"></i> Skills</h5>
+                {{ form.skills }}
+                {% if form.skills.help_text %}
+                <div class="form-text">{{ form.skills.help_text }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Education -->
+            <div class="section-card">
+                <h5><i class="bi bi-mortarboard-fill"></i> Education</h5>
+                {{ form.education }}
+                {% if form.education.help_text %}
+                <div class="form-text">{{ form.education.help_text }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Certificates -->
+            <div class="section-card">
+                <h5><i class="bi bi-patch-check-fill"></i> Certificates</h5>
+                {{ form.certificates }}
+                {% if form.certificates.help_text %}
+                <div class="form-text">{{ form.certificates.help_text }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Languages -->
+            <div class="section-card">
+                <h5><i class="bi bi-translate"></i> Languages</h5>
+                {{ form.languages }}
+                {% if form.languages.help_text %}
+                <div class="form-text">{{ form.languages.help_text }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Links -->
+            <div class="section-card">
+                <h5><i class="bi bi-link-45deg"></i> Links</h5>
+                {{ form.links }}
+                {% if form.links.help_text %}
+                <div class="form-text">{{ form.links.help_text }}</div>
+                {% endif %}
+            </div>
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-custom" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i> {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="text-center mt-4 mb-4">
+                <button type="submit" class="btn btn-save">
+                    <i class="bi bi-check-lg"></i> Save Profile
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Auto-hide success toast
+    const toast = document.getElementById('savedToast');
+    if (toast) {
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+</script>
+{% endblock %}
