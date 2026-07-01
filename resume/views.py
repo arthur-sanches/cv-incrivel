@@ -1,3 +1,4 @@
+import json
 import re
 
 from django.contrib.auth.decorators import login_required
@@ -93,37 +94,41 @@ def index(request):
                                 structure you need to follow:
                                 {
                                     "resume": {
-                                        "professional_summary": "string",
-                                        "core_competencies": ["string"],
-                                        "experience": [
-                                            {
-                                                "job_title": "string",
-                                                "company": "string",
-                                                "start_date": "string",
-                                                "end_date": "string",
-                                                "achievements": ["string"]
-                                            },
-                                        ],
-                                        "education": [
-                                            {
-                                                "degree": "string",
-                                                "institution": "string",
-                                                "graduation_date": "string"
-                                            },
-                                        ],
-                                        "certifications": ["string"],
-                                        "skills": ["string"],
+                                        "summary": "string (professional summary)",
+                                        "work_experiences": "string (detailed work history)",
+                                        "skills": "string (comma-separated or listed skills)",
+                                        "education": "string (education history)",
+                                        "certificates": "string (certifications)",
+                                        "languages": "string (languages)",
+                                        "links": "string (links like LinkedIn, GitHub, etc.)"
                                     }
+                                }
                                 """,
                             data=extracted_text,
                         )
                         resume_data = client.run()
                         extracted_text = resume_data
 
-                        # Save to database (replace any existing resume for this user)
+                        # Parse the JSON response and save to individual fields
+                        if isinstance(resume_data, str):
+                            parsed = json.loads(resume_data)
+                        else:
+                            parsed = resume_data
+                        resume_fields = parsed.get("resume", parsed)
+
                         Resume.objects.update_or_create(
                             user=request.user,
-                            defaults={"resume_data": resume_data},
+                            defaults={
+                                "summary": resume_fields.get("summary", ""),
+                                "work_experiences": resume_fields.get(
+                                    "work_experiences", ""
+                                ),
+                                "skills": resume_fields.get("skills", ""),
+                                "education": resume_fields.get("education", ""),
+                                "certificates": resume_fields.get("certificates", ""),
+                                "languages": resume_fields.get("languages", ""),
+                                "links": resume_fields.get("links", ""),
+                            },
                         )
 
                         # Redirect to generate_cv after successful extraction
@@ -144,7 +149,7 @@ def index(request):
 
     return render(
         request,
-        "dataretriever/upload.html",
+        "resume/upload.html",
         {
             "form": form,
             "personal_info_form": personal_info_form,

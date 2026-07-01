@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "login",
-    "dataretriever",
+    "resume",
     "generate_cv",
     "ai_integration",
 ]

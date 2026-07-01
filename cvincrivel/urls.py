@@ -28,6 +28,6 @@ urlpatterns = [
     path("", redirect_to_login, name="home"),
     path("admin/", admin.site.urls),
     path("login/", include("login.urls")),
-    path("add_info/", include("dataretriever.urls")),
+    path("add_info/", include("resume.urls")),
     path("generate_cv/", include("generate_cv.urls")),
 ]
