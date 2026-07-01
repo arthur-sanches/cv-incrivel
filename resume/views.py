@@ -89,7 +89,8 @@ def index(request):
                     try:
                         client = OpenRouterClient(
                             command="""
-                                Extract the data from this resume text and structure it into a 
+                                If the following text is not in English translate it to English.
+                                Then extract the data from this resume text and structure it into a 
                                 JSON object, answer me with only the JSON object, here is the 
                                 structure you need to follow:
                                 {
