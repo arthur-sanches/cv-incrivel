@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-4z%f(px)1a-j9a@dd6w_5xjm7a5=ggl$#c852r1!5zpguxg@v3"
+SECRET_KEY = os.getenv("SECRET_KEY", "")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -122,8 +128,8 @@ STATIC_URL = "static/"
 
 # OpenRouter integration settings
 # The API key can also be provided via the OPENROUTER_API_KEY environment variable.
-OPENROUTER_API_KEY = ""
-OPENROUTER_MODEL = "openrouter/auto"
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
+OPENROUTER_MODEL = "openrouter/deepseek/deepseek-v4-flash"
 OPENROUTER_HTTP_REFERER = ""
 OPENROUTER_X_OPEN_ROUTER_TITLE = ""
 

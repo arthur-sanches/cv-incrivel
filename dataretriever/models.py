@@ -6,7 +6,7 @@ class Resume(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="resumes",
+        related_name="resume",
     )
     resume_data = models.JSONField(
         verbose_name="Resume Data",
