@@ -8,7 +8,6 @@ underlying SDK details.
 
 from __future__ import annotations
 
-import os
 from typing import Optional
 
 from django.conf import settings
@@ -39,7 +38,7 @@ class OpenRouterClient:
 
     # Default model used when none is provided. Can be overridden per call
     # or through the ``OPENROUTER_MODEL`` environment variable.
-    DEFAULT_MODEL = "openrouter/auto"
+    DEFAULT_MODEL = "inclusionai/ling-2.6-flash"
 
     def __init__(
         self,
@@ -60,28 +59,13 @@ class OpenRouterClient:
         self.response: str = ""
         self._system_prompt: Optional[str] = system_prompt
 
-        self._model = (
-            model
-            or os.getenv("OPENROUTER_MODEL")
-            or getattr(settings, "OPENROUTER_MODEL", self.DEFAULT_MODEL)
-        )
-        self._api_key = (
-            api_key
-            or os.getenv("OPENROUTER_API_KEY")
-            or getattr(settings, "OPENROUTER_API_KEY", "")
-            or None
-        )
+        self._model = self.DEFAULT_MODEL
+        self._api_key = api_key or getattr(settings, "OPENROUTER_API_KEY", "")
         self._http_referer = (
-            http_referer
-            or os.getenv("OPENROUTER_HTTP_REFERER")
-            or getattr(settings, "OPENROUTER_HTTP_REFERER", "")
-            or None
+            http_referer or getattr(settings, "OPENROUTER_HTTP_REFERER", "") or ""
         )
         self._app_title = (
-            app_title
-            or os.getenv("OPENROUTER_X_OPEN_ROUTER_TITLE")
-            or getattr(settings, "OPENROUTER_X_OPEN_ROUTER_TITLE", "")
-            or None
+            app_title or getattr(settings, "OPENROUTER_X_OPEN_ROUTER_TITLE", "") or ""
         )
 
         self._client = OpenRouter(
@@ -123,9 +107,7 @@ class OpenRouterClient:
             ) from exc
 
         if not result or not getattr(result, "choices", None):
-            raise OpenRouterIntegrationError(
-                "OpenRouter returned an empty response."
-            )
+            raise OpenRouterIntegrationError("OpenRouter returned an empty response.")
 
         choice = result.choices[0]
         message = getattr(choice, "message", None)
@@ -139,9 +121,7 @@ class OpenRouterClient:
         # ``content`` may be a string or a list of content items; normalise
         # to a plain string for the agnostic interface.
         if isinstance(content, list):
-            content = "".join(
-                str(getattr(item, "text", item)) for item in content
-            )
+            content = "".join(str(getattr(item, "text", item)) for item in content)
 
         self.response = str(content)
         return self.response

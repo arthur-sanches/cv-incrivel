@@ -129,7 +129,7 @@ STATIC_URL = "static/"
 # OpenRouter integration settings
 # The API key can also be provided via the OPENROUTER_API_KEY environment variable.
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
-OPENROUTER_MODEL = "openrouter/deepseek/deepseek-v4-flash"
+OPENROUTER_MODEL = "deepseek/deepseek-v4-flash"
 OPENROUTER_HTTP_REFERER = ""
 OPENROUTER_X_OPEN_ROUTER_TITLE = ""
 
