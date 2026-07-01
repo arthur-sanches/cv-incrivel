@@ -1,5 +1,9 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from resume.models import Resume
 
 
 class CustomUserManager(BaseUserManager):
@@ -45,6 +49,11 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS: list[str] = []
 
     objects = CustomUserManager()
+
+    if TYPE_CHECKING:
+
+        @property
+        def resume(self) -> "Resume": ...
 
     def __str__(self) -> str:
         return self.email
