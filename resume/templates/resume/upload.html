@@ -149,7 +149,7 @@
 
 {% block content %}
     <div class="main-container">
-        {% if is_first_time %}
+        {% if not has_resume %}
         <div class="setup-banner">
             <i class="bi bi-rocket-takeoff"></i>
             <div>
@@ -161,7 +161,7 @@
 
         <div class="page-header">
             <h1><i class="bi bi-file-earmark-text"></i> CV Incrível</h1>
-            {% if is_first_time %}
+            {% if not has_resume %}
             <p>Let's get your resume data ready so we can generate an amazing CV for you</p>
             {% else %}
             <p>Upload your resume and we'll extract the information instantly</p>

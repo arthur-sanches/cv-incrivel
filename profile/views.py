@@ -8,6 +8,9 @@ from .forms import ProfileForm
 
 @login_required
 def profile_view(request):
+    if not Resume.objects.filter(user=request.user).exists():
+        return redirect("/profile_setup/")
+
     resume, _ = Resume.objects.get_or_create(user=request.user)
 
     if request.method == "POST":

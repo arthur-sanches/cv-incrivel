@@ -32,13 +32,17 @@ def _make_flexible_phone_pattern(phone_value: str) -> str | None:
 
 @login_required
 def index(request):
+    # Users with a resume already should use /profile/ instead
+    if Resume.objects.filter(user=request.user).exists():
+        return redirect("profile")
+
     extracted_text = None
     error = None
     filename = None
     extraction_done = False
     personal_info_form = PersonalInfoForm()
     removed_fields = []
-    is_first_time = not Resume.objects.filter(user=request.user).exists()
+    has_no_resume = not Resume.objects.filter(user=request.user).exists()
 
     if request.method == "POST":
         form = ResumeUploadForm(request.POST, request.FILES)
@@ -182,6 +186,6 @@ def index(request):
             "extraction_done": extraction_done,
             "removed_fields": removed_fields,
             "active_page": "extract",
-            "is_first_time": is_first_time,
+            "has_no_resume": has_no_resume,
         },
     )

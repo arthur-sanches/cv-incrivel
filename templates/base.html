@@ -152,9 +152,11 @@
             <small>Resume Toolkit</small>
         </div>
         <div class="sidebar-nav">
+            {% if not has_resume %}
             <a href="{% url 'index' %}" class="nav-item {% if active_page == 'extract' %}active{% endif %}">
                 <i class="bi bi-upload"></i> Profile Setup
             </a>
+            {% endif %}
             <a href="{% url 'profile' %}" class="nav-item {% if active_page == 'profile' %}active{% endif %}">
                 <i class="bi bi-person-gear"></i> My Profile
             </a>

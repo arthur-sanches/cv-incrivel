@@ -9,7 +9,7 @@ from resume.models import Resume
 def generate_cv(request):
     # First-time user without resume data — send to setup page
     if not Resume.objects.filter(user=request.user).exists():
-        return redirect("index")
+        return redirect("/profile_setup/")
 
     form = GenerateCvForm()
     return render(
