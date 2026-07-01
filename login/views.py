@@ -2,9 +2,12 @@ from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect
 
+from .forms import EmailAuthenticationForm
+
 
 class CustomLoginView(LoginView):
     template_name = "login/login.html"
+    authentication_form = EmailAuthenticationForm
 
     def get_success_url(self):
         return "/generate_cv/"
