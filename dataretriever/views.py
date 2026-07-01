@@ -78,7 +78,7 @@ def index(request):
                             pattern = re.escape(value)
                         extracted_text = re.sub(
                             pattern,
-                            f"[REDACTED_{field_name}]",
+                            " ",
                             extracted_text,
                             flags=re.IGNORECASE,
                         )
