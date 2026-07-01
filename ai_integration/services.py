@@ -38,7 +38,6 @@ class OpenRouterClient:
 
     # Default model used when none is provided. Can be overridden per call
     # or through the ``OPENROUTER_MODEL`` environment variable.
-    DEFAULT_MODEL = "inclusionai/ling-2.6-flash"
 
     def __init__(
         self,
@@ -47,26 +46,18 @@ class OpenRouterClient:
         system_prompt: Optional[str] = None,
         *,
         model: Optional[str] = None,
-        api_key: Optional[str] = None,
-        http_referer: Optional[str] = None,
-        app_title: Optional[str] = None,
     ) -> None:
         if not command:
             raise ValueError("'command' must be a non-empty string.")
 
         self.command: str = command
-        self.data: str = data
+        self.data: Optional[str] = data
         self.response: str = ""
         self._system_prompt: Optional[str] = system_prompt
-
-        self._model = self.DEFAULT_MODEL
-        self._api_key = api_key or getattr(settings, "OPENROUTER_API_KEY", "")
-        self._http_referer = (
-            http_referer or getattr(settings, "OPENROUTER_HTTP_REFERER", "") or ""
-        )
-        self._app_title = (
-            app_title or getattr(settings, "OPENROUTER_X_OPEN_ROUTER_TITLE", "") or ""
-        )
+        self._model = model or getattr(settings, "OPENROUTER_MODEL", "")
+        self._api_key = getattr(settings, "OPENROUTER_API_KEY", "")
+        self._http_referer = getattr(settings, "OPENROUTER_HTTP_REFERER", "")
+        self._app_title = getattr(settings, "OPENROUTER_X_OPEN_ROUTER_TITLE", "")
 
         self._client = OpenRouter(
             api_key=self._api_key,

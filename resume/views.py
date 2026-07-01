@@ -126,6 +126,7 @@ def index(request):
                                 }
                                 """,
                             data=extracted_text,
+                            model="inclusionai/ling-2.6-flash",
                         )
                         resume_data = client.run()
                         extracted_text = resume_data
