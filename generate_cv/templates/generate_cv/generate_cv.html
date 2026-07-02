@@ -35,6 +35,27 @@
         textarea.form-control::placeholder {
             color: #8E8EA0;
         }
+
+        .result-card {
+            background-color: var(--chat-bg);
+            border: 1px solid #3E3F4B;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .extracted-text {
+            background-color: var(--sidebar-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            white-space: pre-wrap;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-height: 600px;
+            overflow-y: auto;
+        }
     </style>
     {% endblock %}
 
@@ -66,6 +87,13 @@
         {% if error %}
         <div class="alert alert-custom" role="alert">
             <i class="bi bi-exclamation-triangle-fill"></i> {{ error }}
+        </div>
+        {% endif %}
+
+        {% if result %}
+        <div class="upload-card">
+            <h5 class="mb-3"><i class="bi bi-file-text-fill text-success"></i> Generated CV</h5>
+            <div class="extracted-text">{{ result|linebreaks }}</div>
         </div>
         {% endif %}
     </div>

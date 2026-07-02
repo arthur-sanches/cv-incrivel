@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Name - Resume</title>
+    <style>
+        /* --- CSS VARIABLES FOR EASY COLOR TWEAKS --- */
+        :root {
+            --primary-color: #222222;
+            --text-color: #444444;
+            --border-color: #dddddd;
+            --bg-color: #ffffff;
+            --page-bg: #f5f6f8;
+        }
+
+        /* --- RESET & BASE TYPOGRAPHY --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* Standard sans-serif fonts are safe, modern, and readable */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--page-bg);
+            color: var(--text-color);
+            line-height: 1.5;
+            font-size: 11pt;
+        }
+
+        /* --- LAYOUT --- */
+        .resume-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: var(--bg-color);
+            padding: 50px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* --- HEADER --- */
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+
+        .contact-info {
+            font-size: 0.95rem;
+        }
+
+        .contact-info a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+        
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- SECTIONS --- */
+        section {
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- EXPERIENCE & EDUCATION --- */
+        .item-block {
+            margin-bottom: 15px;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 2px;
+        }
+
+        h3 {
+            color: var(--primary-color);
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        .date {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .organization {
+            font-style: italic;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        /* --- LISTS --- */
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 4px;
+        }
+
+        /* --- SKILLS SECTION --- */
+        .skills-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        /* --- PRINT OPTIMIZATION --- */
+        @media print {
+            body {
+                background-color: var(--bg-color);
+                font-size: 10pt;
+            }
+            .resume-container {
+                margin: 0;
+                padding: 0;
+                box-shadow: none;
+                max-width: 100%;
+            }
+            /* Prevents page breaks inside a job description */
+            .item-block {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="resume-container">
+        
+        <header>
+            <h1>Jane Doe</h1>
+            <p class="contact-info">
+                New York, NY 10001 | (555) 123-4567 | <a href="mailto:jane.doe@email.com">jane.doe@email.com</a><br>
+                <a href="https://linkedin.com/in/janedoe" target="_blank">linkedin.com/in/janedoe</a> | <a href="https://github.com/janedoe" target="_blank">github.com/janedoe</a>
+            </p>
+        </header>
+
+        <section>
+            <h2>Professional Summary</h2>
+            <p>Detail-oriented and adaptable professional with over 5 years of experience in project management and software development. Proven track record of streamlining processes, improving team efficiency by 30%, and delivering complex projects ahead of schedule. Strong communicator who thrives in cross-functional team environments.</p>
+        </section>
+
+        <section>
+            <h2>Professional Experience</h2>
+            
+            <div class="item-block">
+                <div class="item-header">
+                    <h3>Senior Project Manager</h3>
+                    <span class="date">Jan 2021 – Present</span>
+                </div>
+                <div class="organization">Tech Innovations Inc. | New York, NY</div>
+                <ul>
+                    <li>Led a cross-functional team of 15 members to successfully launch the flagship application, resulting in a 25% increase in user acquisition.</li>
+                    <li>Implemented Agile methodologies across all development teams, reducing time-to-market for new features by 20%.</li>
+                    <li>Managed an annual budget of $1.5M, consistently delivering projects 10% under budget.</li>
+                </ul>
+            </div>
+
+            <div class="item-block">
+                <div class="item-header">
+                    <h3>Operations Coordinator</h3>
+                    <span class="date">Jun 2018 – Dec 2020</span>
+                </div>
+                <div class="organization">Global Solutions LLC | Boston, MA</div>
+                <ul>
+                    <li>Developed and maintained automated reporting dashboards, saving the executive team 10 hours per week in data compilation.</li>
+                    <li>Coordinated logistics for 50+ corporate events, ensuring seamless execution and vendor compliance.</li>
+                    <li>Resolved operational bottlenecks by restructuring the internal ticketing system.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>Education</h2>
+            
+            <div class="item-block">
+                <div class="item-header">
+                    <h3>Bachelor of Science in Business Administration</h3>
+                    <span class="date">May 2018</span>
+                </div>
+                <div class="organization">State University | University Town, PA</div>
+                <ul>
+                    <li>Graduated Magna Cum Laude (GPA: 3.8/4.0)</li>
+                    <li>President of the Future Business Leaders Society</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>Technical Skills</h2>
+            <ul class="skills-list">
+                <li><strong>Methodologies:</strong> Agile, Scrum, Kanban, Lean Six Sigma</li>
+                <li><strong>Software & Tools:</strong> Jira, Asana, Salesforce, Tableau, Microsoft Office Suite</li>
+                <li><strong>Programming:</strong> HTML5, CSS3, basic JavaScript and SQL</li>
+            </ul>
+        </section>
+
+    </div>
+
+</body>
+</html>
