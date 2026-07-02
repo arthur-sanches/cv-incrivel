@@ -8,6 +8,30 @@ class Resume(models.Model):
         on_delete=models.CASCADE,
         related_name="resume",
     )
+    name = models.CharField(
+        verbose_name="Full Name",
+        max_length=255,
+        blank=True,
+        default="",
+    )
+    contact_email = models.EmailField(
+        verbose_name="Contact Email",
+        max_length=255,
+        blank=True,
+        default="",
+    )
+    phone = models.CharField(
+        verbose_name="Phone",
+        max_length=50,
+        blank=True,
+        default="",
+    )
+    address = models.CharField(
+        verbose_name="Address",
+        max_length=500,
+        blank=True,
+        default="",
+    )
     summary = models.TextField(
         verbose_name="Professional Summary",
         blank=True,

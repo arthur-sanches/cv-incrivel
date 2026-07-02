@@ -6,6 +6,10 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Resume
         fields = [
+            "name",
+            "contact_email",
+            "phone",
+            "address",
             "summary",
             "work_experiences",
             "skills",
@@ -15,6 +19,30 @@ class ProfileForm(forms.ModelForm):
             "links",
         ]
         widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "e.g. John Doe",
+                }
+            ),
+            "contact_email": forms.EmailInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "e.g. john@example.com",
+                }
+            ),
+            "phone": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "e.g. +1 (555) 123-4567",
+                }
+            ),
+            "address": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "e.g. 123 Main St, City (optional)",
+                }
+            ),
             "summary": forms.Textarea(
                 attrs={
                     "class": "form-control",
@@ -66,6 +94,10 @@ class ProfileForm(forms.ModelForm):
             ),
         }
         labels = {
+            "name": "Full Name",
+            "contact_email": "Contact Email",
+            "phone": "Phone",
+            "address": "Address",
             "summary": "Professional Summary",
             "work_experiences": "Work Experiences",
             "skills": "Skills",
@@ -75,6 +107,7 @@ class ProfileForm(forms.ModelForm):
             "links": "Links",
         }
         help_texts = {
+            "address": "Optional. Your street address or location.",
             "work_experiences": "One experience per block. Include role, company, duration, and description.",
             "skills": "Separate skills with commas or list them line by line.",
             "education": "Include degree, institution, and graduation year.",

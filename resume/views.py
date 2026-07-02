@@ -146,6 +146,16 @@ def index(request):
                         Resume.objects.update_or_create(
                             user=request.user,
                             defaults={
+                                "name": personal_info_form.cleaned_data.get("name", ""),
+                                "contact_email": personal_info_form.cleaned_data.get(
+                                    "email", ""
+                                ),
+                                "phone": personal_info_form.cleaned_data.get(
+                                    "phone", ""
+                                ),
+                                "address": personal_info_form.cleaned_data.get(
+                                    "address", ""
+                                ),
                                 "summary": resume_fields.get("summary", ""),
                                 "work_experiences": resume_fields.get(
                                     "work_experiences", ""
