@@ -1,3 +1,11 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import GeneratedCV
+
+
+@admin.register(GeneratedCV)
+class GeneratedCVAdmin(admin.ModelAdmin):
+    list_display = ["user", "created_at", "updated_at"]
+    list_filter = ["created_at", "updated_at"]
+    search_fields = ["user__username", "professional_summary", "skills"]
+    readonly_fields = ["created_at", "updated_at"]
