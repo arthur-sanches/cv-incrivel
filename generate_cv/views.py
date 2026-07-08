@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from .forms import GenerateCvForm
+from .models import GeneratedCV
 from resume.models import Resume
 from ai_integration.services import OpenRouterClient
 
@@ -54,8 +55,11 @@ def generate_cv(request):
                         Summary, Core Competencies, Experience, Education), outputting the final result in clean 
                         Markdown with key metrics bolded for maximum visual scannability. Do not invent any 
                         information or achievements, only use the data provided.
-                        
-                        Your output should be in JSON format with the following structure:
+
+                        Use the "resume" information provided to generate a tailored CV for the "job_description". 
+                        The output should be in the same language as the "job_description" and in JSON format, 
+                        strictly adhering to the following structure:
+
                         {
                             "resume": {
                                 "summary": "string",
@@ -82,8 +86,36 @@ def generate_cv(request):
                         }
                         """,
                     data=json.dumps(payload, indent=2),
+                    model="deepseek/deepseek-v4-flash",
                 )
                 result = client.run()
+
+                # Parse the JSON response and save to database
+                try:
+                    parsed = json.loads(result)
+                    resume_data = parsed.get("resume", {})
+
+                    generated_cv = GeneratedCV.objects.create(
+                        user=request.user,
+                        name=f"CV - {job_description[:50]}",
+                        professional_summary=resume_data.get("summary", ""),
+                        work_experiences=json.dumps(
+                            resume_data.get("experience", []), indent=2
+                        ),
+                        skills=json.dumps(resume_data.get("skills", []), indent=2),
+                        education=json.dumps(
+                            resume_data.get("education", []), indent=2
+                        ),
+                        certificates=json.dumps(
+                            resume_data.get("certificates", []), indent=2
+                        ),
+                        languages=json.dumps(
+                            resume_data.get("languages", []), indent=2
+                        ),
+                        links=json.dumps(resume_data.get("links", []), indent=2),
+                    )
+                except (json.JSONDecodeError, KeyError, TypeError) as e:
+                    print(f"Error saving generated CV: {str(e)}")
             except Exception as e:
                 error = "Generation failed. Please try again later."
                 print(f"Error during CV generation: {str(e)}")
