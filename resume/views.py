@@ -102,7 +102,7 @@ def index(request):
                                         "summary": "string",
                                         "work_experiences": [
                                         {
-                                            "role": "string",
+                                            "job_title": "string",
                                             "company": "string",
                                             "duration": "string",
                                             "description": "string"
