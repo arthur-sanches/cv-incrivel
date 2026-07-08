@@ -8,6 +8,11 @@ class GeneratedCV(models.Model):
         on_delete=models.CASCADE,
         related_name="generated_cvs",
     )
+    name = models.TextField(
+        verbose_name="Name",
+        blank=True,
+        default="",
+    )
     professional_summary = models.TextField(
         verbose_name="Professional Summary",
         blank=True,
