@@ -1,4 +1,7 @@
 import json
+from io import BytesIO
+
+from html4docx import HtmlToDocx
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -243,6 +246,106 @@ def download_cv(request, cv_id):
     response["Content-Disposition"] = f'attachment; filename="{generated_cv.name}.pdf"'
 
     HTML(string=html_string).write_pdf(response)
+
+    return response
+
+
+@login_required
+def download_cv_docx(request, cv_id):
+    generated_cv = get_object_or_404(GeneratedCV, pk=cv_id, user=request.user)
+
+    if request.method == "POST":
+        form = CvDownloadForm(request.POST)
+        if form.is_valid():
+            generated_cv.name = form.cleaned_data["name"]
+            generated_cv.save(update_fields=["name"])
+
+    # Parse JSON fields back into lists
+    try:
+        experience_list = (
+            json.loads(generated_cv.work_experiences)
+            if generated_cv.work_experiences
+            else []
+        )
+    except json.JSONDecodeError:
+        experience_list = []
+
+    try:
+        skills_list = json.loads(generated_cv.skills) if generated_cv.skills else []
+    except json.JSONDecodeError:
+        skills_list = []
+
+    try:
+        education_list = (
+            json.loads(generated_cv.education) if generated_cv.education else []
+        )
+    except json.JSONDecodeError:
+        education_list = []
+
+    try:
+        certificates_list = (
+            json.loads(generated_cv.certificates) if generated_cv.certificates else []
+        )
+    except json.JSONDecodeError:
+        certificates_list = []
+
+    try:
+        languages_list = (
+            json.loads(generated_cv.languages) if generated_cv.languages else []
+        )
+    except json.JSONDecodeError:
+        languages_list = []
+
+    try:
+        links_list = json.loads(generated_cv.links) if generated_cv.links else []
+    except json.JSONDecodeError:
+        links_list = []
+
+    try:
+        headings = json.loads(generated_cv.headings) if generated_cv.headings else {}
+    except json.JSONDecodeError:
+        headings = {}
+
+    # Get user's resume for contact info
+    resume = get_object_or_404(Resume, user=request.user)
+
+    context = {
+        "name": resume.name or "",
+        "contact_email": resume.contact_email or "",
+        "phone": resume.phone or "",
+        "address": resume.address or "",
+        "professional_summary": generated_cv.professional_summary,
+        "experience_list": experience_list,
+        "skills_list": skills_list,
+        "education_list": education_list,
+        "certificates_list": certificates_list,
+        "languages_list": languages_list,
+        "links_list": links_list,
+        "headings": headings
+        or {
+            "professional_summary": "Professional Summary",
+            "professional_experience": "Professional Experience",
+            "education": "Education",
+            "skills": "Technical Skills",
+            "certificates": "Certificates",
+            "languages": "Languages",
+        },
+    }
+
+    html_string = render_to_string("cv_templates/1.html", context)
+
+    parser = HtmlToDocx()
+    docx = parser.parse_html_string(html_string)
+
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
+    response["Content-Disposition"] = f'attachment; filename="{generated_cv.name}.docx"'
+
+    buffer = BytesIO()
+    docx.save(buffer)
+    buffer.seek(0)
+    response.write(buffer.read())
 
     return response
 
