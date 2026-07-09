@@ -1,4 +1,5 @@
 import json
+import re
 from io import BytesIO
 
 from html4docx import HtmlToDocx
@@ -14,6 +15,21 @@ from .forms import CvDownloadForm, GenerateCvForm
 from .models import GeneratedCV
 from resume.models import Resume
 from ai_integration.services import OpenRouterClient
+
+
+def _md_bold(text):
+    """Convert **text** to <strong>text</strong>."""
+    return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
+
+
+def _process_achievements(achievements):
+    """Convert markdown bold in each achievement string."""
+    return [_md_bold(a) for a in achievements]
+
+
+def _process_skills(skills):
+    """Convert markdown bold in each skill string."""
+    return [_md_bold(s) for s in skills]
 
 
 @login_required
@@ -217,12 +233,18 @@ def download_cv(request, cv_id):
     # Get user's resume for contact info
     resume = get_object_or_404(Resume, user=request.user)
 
+    # Process markdown bold to HTML bold
+    for exp in experience_list:
+        exp["achievements"] = _process_achievements(exp.get("achievements", []))
+    skills_list = _process_skills(skills_list)
+    professional_summary = _md_bold(generated_cv.professional_summary)
+
     context = {
         "name": resume.name or "",
         "contact_email": resume.contact_email or "",
         "phone": resume.phone or "",
         "address": resume.address or "",
-        "professional_summary": generated_cv.professional_summary,
+        "professional_summary": professional_summary,
         "experience_list": experience_list,
         "skills_list": skills_list,
         "education_list": education_list,
@@ -309,12 +331,18 @@ def download_cv_docx(request, cv_id):
     # Get user's resume for contact info
     resume = get_object_or_404(Resume, user=request.user)
 
+    # Process markdown bold to HTML bold
+    for exp in experience_list:
+        exp["achievements"] = _process_achievements(exp.get("achievements", []))
+    skills_list = _process_skills(skills_list)
+    professional_summary = _md_bold(generated_cv.professional_summary)
+
     context = {
         "name": resume.name or "",
         "contact_email": resume.contact_email or "",
         "phone": resume.phone or "",
         "address": resume.address or "",
-        "professional_summary": generated_cv.professional_summary,
+        "professional_summary": professional_summary,
         "experience_list": experience_list,
         "skills_list": skills_list,
         "education_list": education_list,

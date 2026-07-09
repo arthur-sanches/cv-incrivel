@@ -123,10 +123,18 @@
             margin-bottom: 4px;
         }
 
+        strong {
+            font-weight: 700;
+        }
+
         /* --- SKILLS SECTION --- */
         .skills-list {
             list-style: none;
             padding-left: 0;
+        }
+
+        .skills-list li strong {
+            font-weight: 700;
         }
 
         /* --- PRINT OPTIMIZATION --- */
@@ -200,7 +208,7 @@
         {% if professional_summary %}
         <section>
             <h2>{{ headings.professional_summary }}</h2>
-            <p>{{ professional_summary }}</p>
+            <p>{{ professional_summary|safe }}</p>
         </section>
         {% endif %}
 
@@ -216,7 +224,7 @@
                 <div class="organization">{{ exp.company }}</div>
                 <ul>
                     {% for achievement in exp.achievements %}
-                    <li>{{ achievement }}</li>
+                    <li>{{ achievement|safe }}</li>
                     {% endfor %}
                 </ul>
             </div>
@@ -244,7 +252,7 @@
             <h2>{{ headings.skills }}</h2>
             <ul class="skills-list">
                 {% for skill in skills_list %}
-                <li>{{ skill }}</li>
+                <li>{{ skill|safe }}</li>
                 {% endfor %}
             </ul>
         </section>
