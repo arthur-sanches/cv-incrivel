@@ -156,7 +156,9 @@
             <h1>{{ name }}</h1>
             <p class="contact-info">
                 {% if contact_email or phone or address %}
-                    {{ address }} | {{ phone }} | {{ contact_email }}<br>
+                    {% if address %}{{ address }} | {% endif %}
+                    {{ phone }} |
+                    {{ contact_email }}<br>
                 {% endif %}
                 {% for link in links_list %}
                     <a href="{{ link }}" target="_blank">{{ link }}</a>{% if not forloop.last %} | {% endif %}
