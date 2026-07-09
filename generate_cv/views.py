@@ -213,7 +213,7 @@ def download_cv(request, cv_id):
         "links_list": links_list,
     }
 
-    html_string = render_to_string("generate_cv/cv_templates/1.html", context)
+    html_string = render_to_string("cv_templates/1.html", context)
 
     response = HttpResponse(content_type="application/pdf")
     response["Content-Disposition"] = f'attachment; filename="{generated_cv.name}.pdf"'
