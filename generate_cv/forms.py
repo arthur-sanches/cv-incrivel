@@ -14,3 +14,16 @@ class GenerateCvForm(forms.Form):
             }
         ),
     )
+
+
+class CvDownloadForm(forms.Form):
+    name = forms.CharField(
+        label="File Name",
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "e.g. My Tailored CV",
+            }
+        ),
+    )

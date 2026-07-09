@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Name - Resume</title>
+    <title>{{ name }} - Resume</title>
     <style>
         /* --- CSS VARIABLES FOR EASY COLOR TWEAKS --- */
         :root {
@@ -153,72 +153,91 @@
     <div class="resume-container">
         
         <header>
-            <h1>Jane Doe</h1>
+            <h1>{{ name }}</h1>
             <p class="contact-info">
-                New York, NY 10001 | (555) 123-4567 | <a href="mailto:jane.doe@email.com">jane.doe@email.com</a><br>
-                <a href="https://linkedin.com/in/janedoe" target="_blank">linkedin.com/in/janedoe</a> | <a href="https://github.com/janedoe" target="_blank">github.com/janedoe</a>
+                {% if contact_email or phone or address %}
+                    {{ address }} | {{ phone }} | {{ contact_email }}<br>
+                {% endif %}
+                {% for link in links_list %}
+                    <a href="{{ link }}" target="_blank">{{ link }}</a>{% if not forloop.last %} | {% endif %}
+                {% endfor %}
             </p>
         </header>
 
+        {% if professional_summary %}
         <section>
             <h2>Professional Summary</h2>
-            <p>Detail-oriented and adaptable professional with over 5 years of experience in project management and software development. Proven track record of streamlining processes, improving team efficiency by 30%, and delivering complex projects ahead of schedule. Strong communicator who thrives in cross-functional team environments.</p>
+            <p>{{ professional_summary }}</p>
         </section>
+        {% endif %}
 
+        {% if experience_list %}
         <section>
             <h2>Professional Experience</h2>
-            
+            {% for exp in experience_list %}
             <div class="item-block">
                 <div class="item-header">
-                    <h3>Senior Project Manager</h3>
-                    <span class="date">Jan 2021 – Present</span>
+                    <h3>{{ exp.job_title }}</h3>
+                    <span class="date">{{ exp.duration }}</span>
                 </div>
-                <div class="organization">Tech Innovations Inc. | New York, NY</div>
+                <div class="organization">{{ exp.company }}</div>
                 <ul>
-                    <li>Led a cross-functional team of 15 members to successfully launch the flagship application, resulting in a 25% increase in user acquisition.</li>
-                    <li>Implemented Agile methodologies across all development teams, reducing time-to-market for new features by 20%.</li>
-                    <li>Managed an annual budget of $1.5M, consistently delivering projects 10% under budget.</li>
+                    {% for achievement in exp.achievements %}
+                    <li>{{ achievement }}</li>
+                    {% endfor %}
                 </ul>
             </div>
-
-            <div class="item-block">
-                <div class="item-header">
-                    <h3>Operations Coordinator</h3>
-                    <span class="date">Jun 2018 – Dec 2020</span>
-                </div>
-                <div class="organization">Global Solutions LLC | Boston, MA</div>
-                <ul>
-                    <li>Developed and maintained automated reporting dashboards, saving the executive team 10 hours per week in data compilation.</li>
-                    <li>Coordinated logistics for 50+ corporate events, ensuring seamless execution and vendor compliance.</li>
-                    <li>Resolved operational bottlenecks by restructuring the internal ticketing system.</li>
-                </ul>
-            </div>
+            {% endfor %}
         </section>
+        {% endif %}
 
+        {% if education_list %}
         <section>
             <h2>Education</h2>
-            
+            {% for edu in education_list %}
             <div class="item-block">
                 <div class="item-header">
-                    <h3>Bachelor of Science in Business Administration</h3>
-                    <span class="date">May 2018</span>
+                    <h3>{{ edu.degree }}</h3>
+                    <span class="date">{{ edu.graduation_year }}</span>
                 </div>
-                <div class="organization">State University | University Town, PA</div>
-                <ul>
-                    <li>Graduated Magna Cum Laude (GPA: 3.8/4.0)</li>
-                    <li>President of the Future Business Leaders Society</li>
-                </ul>
+                <div class="organization">{{ edu.institution }}</div>
             </div>
+            {% endfor %}
         </section>
+        {% endif %}
 
+        {% if skills_list %}
         <section>
             <h2>Technical Skills</h2>
             <ul class="skills-list">
-                <li><strong>Methodologies:</strong> Agile, Scrum, Kanban, Lean Six Sigma</li>
-                <li><strong>Software & Tools:</strong> Jira, Asana, Salesforce, Tableau, Microsoft Office Suite</li>
-                <li><strong>Programming:</strong> HTML5, CSS3, basic JavaScript and SQL</li>
+                {% for skill in skills_list %}
+                <li>{{ skill }}</li>
+                {% endfor %}
             </ul>
         </section>
+        {% endif %}
+
+        {% if certificates_list %}
+        <section>
+            <h2>Certificates</h2>
+            <ul>
+                {% for cert in certificates_list %}
+                <li>{{ cert }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        {% if languages_list %}
+        <section>
+            <h2>Languages</h2>
+            <ul>
+                {% for lang in languages_list %}
+                <li>{{ lang }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
 
     </div>
 

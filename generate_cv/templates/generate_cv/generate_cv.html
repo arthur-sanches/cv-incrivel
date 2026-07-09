@@ -96,6 +96,26 @@
             <div class="extracted-text">{{ result|linebreaks }}</div>
         </div>
         {% endif %}
+
+        {% if generated_cv %}
+        <div class="upload-card mt-4">
+            <h5 class="mb-3"><i class="bi bi-download"></i> Download Your CV</h5>
+            <form method="post" action="{% url 'download_cv' generated_cv.pk %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="{{ download_form.name.id_for_label }}" class="form-label fw-semibold">
+                        <i class="bi bi-pencil-fill"></i> {{ download_form.name.label }}
+                    </label>
+                    {{ download_form.name }}
+                </div>
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-generate">
+                        <i class="bi bi-filetype-pdf"></i> Download PDF
+                    </button>
+                </div>
+            </form>
+        </div>
+        {% endif %}
     </div>
 {% endblock %}
 
