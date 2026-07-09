@@ -130,20 +130,51 @@
         }
 
         /* --- PRINT OPTIMIZATION --- */
+        @page {
+            margin: 0.5in 0.75in;
+            size: letter;
+        }
+
         @media print {
             body {
                 background-color: var(--bg-color);
-                font-size: 10pt;
+                font-size: 11pt;
+                line-height: 1.4;
             }
             .resume-container {
                 margin: 0;
-                padding: 0;
+                padding: 10px 20px;
                 box-shadow: none;
                 max-width: 100%;
             }
-            /* Prevents page breaks inside a job description */
+            header {
+                padding-bottom: 10px;
+                margin-bottom: 12px;
+            }
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 3px;
+            }
+            section {
+                margin-bottom: 12px;
+            }
+            h2 {
+                font-size: 1rem;
+                padding-bottom: 3px;
+                margin-bottom: 10px;
+            }
             .item-block {
+                margin-bottom: 10px;
                 page-break-inside: avoid;
+            }
+            h3 {
+                font-size: 0.95rem;
+            }
+            ul {
+                padding-left: 16px;
+            }
+            li {
+                margin-bottom: 2px;
             }
         }
     </style>
@@ -200,7 +231,7 @@
             <div class="item-block">
                 <div class="item-header">
                     <h3>{{ edu.degree }}</h3>
-                    <span class="date">{{ edu.graduation_year }}</span>
+                    <span class="date">{{ edu.duration }}</span>
                 </div>
                 <div class="organization">{{ edu.institution }}</div>
             </div>

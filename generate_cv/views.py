@@ -62,7 +62,7 @@ def generate_cv(request):
                         past tense for previous roles. Optimize the document for Applicant Tracking Systems by 
                         naturally embedding target keywords and using standard structural headers (Professional 
                         Summary, Core Competencies, Experience, Education), outputting the final result in clean 
-                        Markdown with key metrics bolded for maximum visual scannability. Do not invent any 
+                        Markdown with key metrics bolded for maximum visual scannability. The final CV MUST NOT exceed 2 pages — be concise and prioritize the most relevant experiences and skills. Do not invent any 
                         information or achievements, only use the data provided.
 
                         Use the "resume" information provided to generate a tailored CV for the "job_description". 
@@ -93,7 +93,7 @@ def generate_cv(request):
                                     {
                                         "degree": "string",
                                         "institution": "string",
-                                        "graduation_year": "string"
+                                        "duration": "string (e.g. \"2017-2020\")"
                                     }
                                 ],
                                 "certificates": ["string"],
