@@ -166,14 +166,14 @@
 
         {% if professional_summary %}
         <section>
-            <h2>Professional Summary</h2>
+            <h2>{{ headings.professional_summary }}</h2>
             <p>{{ professional_summary }}</p>
         </section>
         {% endif %}
 
         {% if experience_list %}
         <section>
-            <h2>Professional Experience</h2>
+            <h2>{{ headings.professional_experience }}</h2>
             {% for exp in experience_list %}
             <div class="item-block">
                 <div class="item-header">
@@ -193,7 +193,7 @@
 
         {% if education_list %}
         <section>
-            <h2>Education</h2>
+            <h2>{{ headings.education }}</h2>
             {% for edu in education_list %}
             <div class="item-block">
                 <div class="item-header">
@@ -208,7 +208,7 @@
 
         {% if skills_list %}
         <section>
-            <h2>Technical Skills</h2>
+            <h2>{{ headings.skills }}</h2>
             <ul class="skills-list">
                 {% for skill in skills_list %}
                 <li>{{ skill }}</li>
@@ -219,7 +219,7 @@
 
         {% if certificates_list %}
         <section>
-            <h2>Certificates</h2>
+            <h2>{{ headings.certificates }}</h2>
             <ul>
                 {% for cert in certificates_list %}
                 <li>{{ cert }}</li>
@@ -230,7 +230,7 @@
 
         {% if languages_list %}
         <section>
-            <h2>Languages</h2>
+            <h2>{{ headings.languages }}</h2>
             <ul>
                 {% for lang in languages_list %}
                 <li>{{ lang }}</li>

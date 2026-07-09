@@ -67,6 +67,14 @@ def generate_cv(request):
                         strictly adhering to the following structure:
 
                         {
+                            "headings": {
+                                "professional_summary": "string",
+                                "professional_experience": "string",
+                                "education": "string",
+                                "skills": "string",
+                                "certificates": "string",
+                                "languages": "string"
+                            },
                             "resume": {
                                 "summary": "string",
                                 "experience": [
@@ -100,6 +108,7 @@ def generate_cv(request):
                 try:
                     parsed = json.loads(result)
                     resume_data = parsed.get("resume", {})
+                    headings_data = parsed.get("headings", {})
 
                     generated_cv = GeneratedCV.objects.create(
                         user=request.user,
@@ -119,6 +128,7 @@ def generate_cv(request):
                             resume_data.get("languages", []), indent=2
                         ),
                         links=json.dumps(resume_data.get("links", []), indent=2),
+                        headings=json.dumps(headings_data, indent=2),
                     )
 
                     download_form = CvDownloadForm(initial={"name": generated_cv.name})
@@ -196,6 +206,11 @@ def download_cv(request, cv_id):
     except json.JSONDecodeError:
         links_list = []
 
+    try:
+        headings = json.loads(generated_cv.headings) if generated_cv.headings else {}
+    except json.JSONDecodeError:
+        headings = {}
+
     # Get user's resume for contact info
     resume = get_object_or_404(Resume, user=request.user)
 
@@ -211,6 +226,15 @@ def download_cv(request, cv_id):
         "certificates_list": certificates_list,
         "languages_list": languages_list,
         "links_list": links_list,
+        "headings": headings
+        or {
+            "professional_summary": "Professional Summary",
+            "professional_experience": "Professional Experience",
+            "education": "Education",
+            "skills": "Technical Skills",
+            "certificates": "Certificates",
+            "languages": "Languages",
+        },
     }
 
     html_string = render_to_string("cv_templates/1.html", context)

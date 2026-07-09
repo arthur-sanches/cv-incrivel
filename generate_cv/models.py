@@ -48,6 +48,11 @@ class GeneratedCV(models.Model):
         blank=True,
         default="",
     )
+    headings = models.TextField(
+        verbose_name="Headings",
+        blank=True,
+        default="",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
