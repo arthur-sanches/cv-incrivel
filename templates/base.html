@@ -163,6 +163,9 @@
             <a href="{% url 'generate_cv' %}" class="nav-item {% if active_page == 'generate' %}active{% endif %}">
                 <i class="bi bi-stars"></i> Generate CV
             </a>
+            <a href="{% url 'cv_list' %}" class="nav-item {% if active_page == 'my_cvs' %}active{% endif %}">
+                <i class="bi bi-archive"></i> My CVs
+            </a>
         </div>
         <div class="sidebar-nav border-top border-secondary pt-3 mt-auto">
             <div class="nav-item d-flex align-items-center gap-2 text-muted small px-3 mb-2">

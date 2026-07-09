@@ -245,3 +245,26 @@ def download_cv(request, cv_id):
     HTML(string=html_string).write_pdf(response)
 
     return response
+
+
+@login_required
+def cv_list(request):
+    cvs = GeneratedCV.objects.filter(user=request.user)
+    return render(
+        request,
+        "generate_cv/cv_list.html",
+        {
+            "cvs": cvs,
+            "active_page": "my_cvs",
+        },
+    )
+
+
+@login_required
+def delete_cv(request, cv_id):
+    generated_cv = get_object_or_404(GeneratedCV, pk=cv_id, user=request.user)
+
+    if request.method == "POST":
+        generated_cv.delete()
+
+    return redirect("cv_list")

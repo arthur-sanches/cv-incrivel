@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block title %}CV Incrível - My CVs{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .cv-card {
+        background-color: var(--sidebar-bg);
+        border: 1px solid #3E3F4B;
+        border-radius: 12px;
+        padding: 1.25rem;
+        transition: border-color 0.2s;
+    }
+
+    .cv-card:hover {
+        border-color: var(--accent-color);
+    }
+
+    .cv-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.25rem;
+    }
+
+    .cv-meta {
+        font-size: 0.85rem;
+        color: var(--muted-color);
+    }
+
+    .btn-download {
+        background-color: var(--accent-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: background-color 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-download:hover {
+        background-color: #0d8c6d;
+        color: white;
+    }
+
+    .btn-delete {
+        background-color: transparent;
+        color: #ff4444;
+        border: 1px solid #ff4444;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+
+    .btn-delete:hover {
+        background-color: #ff4444;
+        color: white;
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    /* ─── Delete Modal ─── */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1050;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-overlay.show {
+        display: flex;
+    }
+
+    .modal-box {
+        background-color: var(--sidebar-bg);
+        border: 1px solid #3E3F4B;
+        border-radius: 16px;
+        padding: 2rem;
+        max-width: 440px;
+        width: 90%;
+        text-align: center;
+    }
+
+    .modal-box i.bi-exclamation-triangle {
+        font-size: 3rem;
+        color: #ff4444;
+        margin-bottom: 1rem;
+    }
+
+    .modal-box h5 {
+        color: var(--text-color);
+        margin-bottom: 0.75rem;
+    }
+
+    .modal-box p {
+        color: var(--muted-color);
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+    }
+
+    .modal-actions .btn-keep {
+        background-color: #3E3F4B;
+        color: var(--text-color);
+        border: none;
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .modal-actions .btn-keep:hover {
+        background-color: #4E4F5B;
+    }
+
+    .modal-actions .btn-delete-confirm {
+        background-color: #ff4444;
+        color: white;
+        border: none;
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .modal-actions .btn-delete-confirm:hover {
+        background-color: #cc3333;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--muted-color);
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div class="page-header">
+        <h1><i class="bi bi-archive"></i> My Generated CVs</h1>
+        <p>All your tailored CVs in one place</p>
+    </div>
+
+    {% if cvs %}
+        <div class="d-flex flex-column gap-3">
+            {% for cv in cvs %}
+            <div class="cv-card d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="cv-name">{{ cv.name }}</div>
+                    <div class="cv-meta">Created {{ cv.created_at|date:"M j, Y, g:i a" }}</div>
+                </div>
+                <div class="actions">
+                    <form method="post" action="{% url 'download_cv' cv.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-download">
+                            <i class="bi bi-filetype-pdf"></i> Download
+                        </button>
+                    </form>
+                    <button type="button" class="btn-delete" onclick="showDeleteModal({{ cv.pk }})">
+                        <i class="bi bi-trash3"></i>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="bi bi-file-earmark-text"></i>
+            <h5>No CVs yet</h5>
+            <p>Generate your first tailored CV to see it here.</p>
+            <a href="{% url 'generate_cv' %}" class="btn-download">
+                <i class="bi bi-stars"></i> Generate CV
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal-overlay">
+    <div class="modal-box">
+        <i class="bi bi-exclamation-triangle"></i>
+        <h5>Are you sure?</h5>
+        <p>This action is irreversible, deletion is permanent.</p>
+        <div class="modal-actions">
+            <button type="button" class="btn-keep" onclick="hideDeleteModal()">Keep the CV</button>
+            <form id="deleteForm" method="post" action="">
+                {% csrf_token %}
+                <button type="submit" class="btn-delete-confirm">Delete the CV</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showDeleteModal(cvId) {
+        document.getElementById('deleteForm').action = "{% url 'delete_cv' 0 %}".replace('/0/', '/' + cvId + '/');
+        document.getElementById('deleteModal').classList.add('show');
+    }
+
+    function hideDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('show');
+    }
+
+    // Close modal on overlay click
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            hideDeleteModal();
+        }
+    });
+</script>
+{% endblock %}

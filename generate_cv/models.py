@@ -60,4 +60,4 @@ class GeneratedCV(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self) -> str:
-        return f"GeneratedCV #{self.pk} - {self.user}"
+        return f"Generated CV: {self.name} - {self.user}"
