@@ -100,36 +100,20 @@
         {% if generated_cv %}
         <div class="upload-card mt-4">
             <h5 class="mb-3"><i class="bi bi-download"></i> Download Your CV</h5>
-            <div class="d-flex gap-3">
-                <form method="post" action="{% url 'download_cv' generated_cv.pk %}" class="flex-fill">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="{{ download_form.name.id_for_label }}" class="form-label fw-semibold">
-                            <i class="bi bi-pencil-fill"></i> {{ download_form.name.label }}
-                        </label>
-                        {{ download_form.name }}
-                    </div>
-                    <div class="text-center mt-4">
-                        <button type="submit" class="btn btn-generate">
-                            <i class="bi bi-filetype-pdf"></i> Download PDF
-                        </button>
-                    </div>
-                </form>
-                <form method="post" action="{% url 'download_cv_docx' generated_cv.pk %}" class="flex-fill">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">
-                            <i class="bi bi-pencil-fill"></i> File Name
-                        </label>
-                        <input type="text" name="name" class="form-control" value="{{ generated_cv.name }}" required>
-                    </div>
-                    <div class="text-center mt-4">
-                        <button type="submit" class="btn btn-generate" style="background-color: #2b5797;">
-                            <i class="bi bi-filetype-docx"></i> Download DOCX
-                        </button>
-                    </div>
-                </form>
-            </div>
+            <form method="post" action="{% url 'download_cv' generated_cv.pk %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="{{ download_form.name.id_for_label }}" class="form-label fw-semibold">
+                        <i class="bi bi-pencil-fill"></i> {{ download_form.name.label }}
+                    </label>
+                    {{ download_form.name }}
+                </div>
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-generate">
+                        <i class="bi bi-filetype-pdf"></i> Download PDF
+                    </button>
+                </div>
+            </form>
         </div>
         {% endif %}
     </div>
