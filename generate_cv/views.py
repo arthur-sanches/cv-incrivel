@@ -78,8 +78,10 @@ def generate_cv(request):
                         past tense for previous roles. Optimize the document for Applicant Tracking Systems by 
                         naturally embedding target keywords and using standard structural headers (Professional 
                         Summary, Core Competencies, Experience, Education), outputting the final result in clean 
-                        Markdown with key metrics bolded for maximum visual scannability. The final CV MUST NOT exceed 2 pages — be concise and prioritize the most relevant experiences and skills. Do not invent any 
-                        information or achievements, only use the data provided.
+                        Markdown with key metrics and achievements from the summary and job experiences bolded for 
+                        maximum visual scannability. Do not invent any information or achievements, only use the data 
+                        provided.
+                        Skills should be grouped into categories and the categories should be bold.
 
                         Use the "resume" information provided to generate a tailored CV for the "job_description". 
                         The output should be in the same language as the "job_description" and in JSON format, 
@@ -120,12 +122,29 @@ def generate_cv(request):
                         """,
                     data=json.dumps(payload, indent=2),
                     model="deepseek/deepseek-v4-flash",
+                    provider={
+                        "allow_fallbacks": True,
+                        "order": [
+                            "digitalocean",
+                            "morph",
+                        ],
+                    },
                 )
                 result = client.run()
 
+                # Strip markdown code fences if present (e.g. ```json ... ```)
+                cleaned = result.strip()
+                if cleaned.startswith("```"):
+                    # Remove opening fence (```json, ```, etc.) and closing fence
+                    cleaned = cleaned.split("\n", 1)[-1] if "\n" in cleaned else cleaned
+                    cleaned = (
+                        cleaned.rsplit("```", 1)[0] if "```" in cleaned else cleaned
+                    )
+                    cleaned = cleaned.strip()
+
                 # Parse the JSON response and save to database
                 try:
-                    parsed = json.loads(result)
+                    parsed = json.loads(cleaned)
                     resume_data = parsed.get("resume", {})
                     headings_data = parsed.get("headings", {})
 

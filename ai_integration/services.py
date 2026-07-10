@@ -46,6 +46,7 @@ class OpenRouterClient:
         system_prompt: Optional[str] = None,
         *,
         model: Optional[str] = None,
+        provider: Optional[dict] = None,
     ) -> None:
         if not command:
             raise ValueError("'command' must be a non-empty string.")
@@ -58,6 +59,7 @@ class OpenRouterClient:
         self._api_key = getattr(settings, "OPENROUTER_API_KEY", "")
         self._http_referer = getattr(settings, "OPENROUTER_HTTP_REFERER", "")
         self._app_title = getattr(settings, "OPENROUTER_X_OPEN_ROUTER_TITLE", "")
+        self._provider: Optional[dict] = provider
 
         self._client = OpenRouter(
             api_key=self._api_key,
@@ -88,10 +90,13 @@ class OpenRouterClient:
             The textual response produced by the model.
         """
         try:
-            result = self._client.chat.send(
-                model=self._model,
-                messages=self._build_messages(),
-            )
+            kwargs = {
+                "model": self._model,
+                "messages": self._build_messages(),
+            }
+            if self._provider:
+                kwargs["provider"] = self._provider
+            result = self._client.chat.send(**kwargs)
         except Exception as exc:  # pragma: no cover - depends on network
             raise OpenRouterIntegrationError(
                 f"OpenRouter request failed: {exc}"
