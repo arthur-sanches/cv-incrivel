@@ -121,14 +121,14 @@ def generate_cv(request):
                         }
                         """,
                     data=json.dumps(payload, indent=2),
-                    model="xiaomi/mimo-v2.5",
-                    # provider={
-                    #     "allow_fallbacks": True,
-                    #     "order": [
-                    #         "atlas-cloud/fp8",
-                    #         "novita",
-                    #     ],
-                    # },
+                    model="xiaomi/mimo-v2.5-pro",
+                    provider={
+                        "allow_fallbacks": True,
+                        "order": [
+                            "atlas-cloud/fp8",
+                            "novita",
+                        ],
+                    },
                 )
                 result = client.run()
 
