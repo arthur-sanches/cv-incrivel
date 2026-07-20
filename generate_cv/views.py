@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 
 from weasyprint import HTML
 
-from .forms import CvDownloadForm, GenerateCvForm
+from .forms import CvDownloadForm, EditGeneratedCVForm, GenerateCvForm
 from .models import GeneratedCV
 from resume.models import Resume
 from ai_integration.services import OpenRouterClient
@@ -121,14 +121,14 @@ def generate_cv(request):
                         }
                         """,
                     data=json.dumps(payload, indent=2),
-                    model="deepseek/deepseek-v4-flash",
-                    provider={
-                        "allow_fallbacks": True,
-                        "order": [
-                            "digitalocean",
-                            "morph",
-                        ],
-                    },
+                    model="xiaomi/mimo-v2.5",
+                    # provider={
+                    #     "allow_fallbacks": True,
+                    #     "order": [
+                    #         "atlas-cloud/fp8",
+                    #         "novita",
+                    #     ],
+                    # },
                 )
                 result = client.run()
 
@@ -418,3 +418,59 @@ def delete_cv(request, cv_id):
         generated_cv.delete()
 
     return redirect("cv_list")
+
+
+@login_required
+def edit_cv(request, cv_id):
+    generated_cv = get_object_or_404(GeneratedCV, pk=cv_id, user=request.user)
+
+    if request.method == "POST":
+        form = EditGeneratedCVForm(request.POST)
+        if form.is_valid():
+            generated_cv.name = form.cleaned_data["name"]
+            generated_cv.professional_summary = form.cleaned_data[
+                "professional_summary"
+            ]
+            generated_cv.work_experiences = form.cleaned_data["work_experiences"]
+            generated_cv.skills = form.cleaned_data["skills"]
+            generated_cv.education = form.cleaned_data["education"]
+            generated_cv.certificates = form.cleaned_data["certificates"]
+            generated_cv.languages = form.cleaned_data["languages"]
+            generated_cv.links = form.cleaned_data["links"]
+            generated_cv.headings = form.cleaned_data["headings"]
+            generated_cv.save()
+            return redirect("cv_list")
+    else:
+        initial = {
+            "name": generated_cv.name,
+            "professional_summary": generated_cv.professional_summary,
+            "work_experiences": _pretty_json(generated_cv.work_experiences),
+            "skills": _pretty_json(generated_cv.skills),
+            "education": _pretty_json(generated_cv.education),
+            "certificates": _pretty_json(generated_cv.certificates),
+            "languages": _pretty_json(generated_cv.languages),
+            "links": _pretty_json(generated_cv.links),
+            "headings": _pretty_json(generated_cv.headings),
+        }
+        form = EditGeneratedCVForm(initial=initial)
+
+    return render(
+        request,
+        "generate_cv/edit_cv.html",
+        {
+            "form": form,
+            "generated_cv": generated_cv,
+            "active_page": "my_cvs",
+        },
+    )
+
+
+def _pretty_json(value):
+    """Try to pretty-print a JSON string; return original on failure."""
+    if not value or not value.strip():
+        return ""
+    try:
+        parsed = json.loads(value)
+        return json.dumps(parsed, indent=2)
+    except (json.JSONDecodeError, TypeError):
+        return value

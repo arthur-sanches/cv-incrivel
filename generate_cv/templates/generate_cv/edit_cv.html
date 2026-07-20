@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}CV Incrível - Edit CV{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .edit-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .edit-card {
+        background-color: var(--sidebar-bg);
+        border: 1px solid #3E3F4B;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .edit-card h5 {
+        color: var(--text-color);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .edit-card h5 i {
+        color: var(--accent-color);
+    }
+
+    .form-label {
+        color: var(--text-color);
+        font-weight: 600;
+    }
+
+    .form-control {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        border: 1px solid #3E3F4B;
+    }
+
+    .form-control:focus {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 0.2rem rgba(16, 163, 127, 0.25);
+    }
+
+    .btn-save {
+        background-color: var(--accent-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: background-color 0.3s;
+    }
+
+    .btn-save:hover {
+        background-color: #0d8c6d;
+        color: white;
+    }
+
+    .btn-cancel {
+        background-color: transparent;
+        color: var(--muted-color);
+        border: 1px solid #3E3F4B;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-cancel:hover {
+        background-color: #3E3F4B;
+        color: var(--text-color);
+    }
+
+    .help-text {
+        font-size: 0.85rem;
+        color: var(--muted-color);
+        margin-top: 0.25rem;
+    }
+
+    .error-text {
+        font-size: 0.85rem;
+        color: #ff4444;
+        margin-top: 0.25rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-container edit-container">
+    <div class="page-header">
+        <h1><i class="bi bi-pencil-square"></i> Edit CV</h1>
+        <p>Modify the content of your generated CV</p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {# Name #}
+        <div class="edit-card">
+            <h5><i class="bi bi-tag"></i> CV Name</h5>
+            <div class="mb-3">
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <div class="error-text">{{ form.name.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Professional Summary #}
+        <div class="edit-card">
+            <h5><i class="bi bi-file-text"></i> Professional Summary</h5>
+            <div class="mb-3">
+                {{ form.professional_summary }}
+                {% if form.professional_summary.errors %}
+                    <div class="error-text">{{ form.professional_summary.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Work Experiences #}
+        <div class="edit-card">
+            <h5><i class="bi bi-briefcase"></i> Work Experiences</h5>
+            <div class="mb-3">
+                {{ form.work_experiences }}
+                <div class="help-text">JSON array of experience objects. Each object: {"job_title", "company", "duration", "achievements": [...]}</div>
+                {% if form.work_experiences.errors %}
+                    <div class="error-text">{{ form.work_experiences.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Skills #}
+        <div class="edit-card">
+            <h5><i class="bi bi-gear"></i> Skills</h5>
+            <div class="mb-3">
+                {{ form.skills }}
+                <div class="help-text">JSON array of skill strings.</div>
+                {% if form.skills.errors %}
+                    <div class="error-text">{{ form.skills.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Education #}
+        <div class="edit-card">
+            <h5><i class="bi bi-mortarboard"></i> Education</h5>
+            <div class="mb-3">
+                {{ form.education }}
+                <div class="help-text">JSON array of education objects. Each object: {"degree", "institution", "duration"}</div>
+                {% if form.education.errors %}
+                    <div class="error-text">{{ form.education.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Certificates #}
+        <div class="edit-card">
+            <h5><i class="bi bi-patch-check"></i> Certificates</h5>
+            <div class="mb-3">
+                {{ form.certificates }}
+                <div class="help-text">JSON array of certificate strings.</div>
+                {% if form.certificates.errors %}
+                    <div class="error-text">{{ form.certificates.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Languages #}
+        <div class="edit-card">
+            <h5><i class="bi bi-translate"></i> Languages</h5>
+            <div class="mb-3">
+                {{ form.languages }}
+                <div class="help-text">JSON array of language strings.</div>
+                {% if form.languages.errors %}
+                    <div class="error-text">{{ form.languages.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Links #}
+        <div class="edit-card">
+            <h5><i class="bi bi-link-45deg"></i> Links</h5>
+            <div class="mb-3">
+                {{ form.links }}
+                <div class="help-text">JSON array of link strings.</div>
+                {% if form.links.errors %}
+                    <div class="error-text">{{ form.links.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Headings #}
+        <div class="edit-card">
+            <h5><i class="bi bi-heading"></i> Section Headings</h5>
+            <div class="mb-3">
+                {{ form.headings }}
+                <div class="help-text">JSON object mapping section keys to display headings.</div>
+                {% if form.headings.errors %}
+                    <div class="error-text">{{ form.headings.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Actions #}
+        <div class="d-flex gap-3 justify-content-center mt-4 mb-5">
+            <a href="{% url 'cv_list' %}" class="btn-cancel">
+                <i class="bi bi-x-lg"></i> Cancel
+            </a>
+            <button type="submit" class="btn-save">
+                <i class="bi bi-check-lg"></i> Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
