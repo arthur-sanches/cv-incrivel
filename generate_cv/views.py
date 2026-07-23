@@ -140,7 +140,9 @@ def generate_cv(request):
                     cleaned = result.strip()
                     if cleaned.startswith("```"):
                         # Remove opening fence (```json, ```, etc.) and closing fence
-                        cleaned = cleaned.split("\n", 1)[-1] if "\n" in cleaned else cleaned
+                        cleaned = (
+                            cleaned.split("\n", 1)[-1] if "\n" in cleaned else cleaned
+                        )
                         cleaned = (
                             cleaned.rsplit("```", 1)[0] if "```" in cleaned else cleaned
                         )
@@ -177,7 +179,9 @@ def generate_cv(request):
                         request.user.credits -= 1
                         request.user.save(update_fields=["credits"])
 
-                        download_form = CvDownloadForm(initial={"name": generated_cv.name})
+                        download_form = CvDownloadForm(
+                            initial={"name": generated_cv.name}
+                        )
                         result = "CV generated successfully! Enter a file name and click Download to save your PDF."
                     except (json.JSONDecodeError, KeyError, TypeError) as e:
                         print(f"Error saving generated CV: {str(e)}")
