@@ -44,6 +44,7 @@ class CustomUser(AbstractUser):
 
     username = None
     email = models.EmailField("email address", unique=True)
+    credits = models.IntegerField("credits", default=5)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS: list[str] = []

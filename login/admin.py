@@ -12,14 +12,14 @@ class CustomUserAdmin(UserAdmin):
     """
 
     model = CustomUser
-    list_display = ("email", "is_staff", "is_active")
+    list_display = ("email", "credits", "is_staff", "is_active")
     list_filter = ("is_staff", "is_active")
     search_fields = ("email",)
     ordering = ("email",)
 
     fieldsets = (
         (None, {"fields": ("email", "password")}),
-        ("Personal info", {"fields": ("first_name", "last_name")}),
+        ("Personal info", {"fields": ("first_name", "last_name", "credits")}),
         (
             "Permissions",
             {
